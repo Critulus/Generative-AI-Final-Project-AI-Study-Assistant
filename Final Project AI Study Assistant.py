@@ -1,4 +1,5 @@
 # Final Project: AI Study Assistant
+
 import os
 import gradio as gr
 from transformers import pipeline
@@ -14,6 +15,7 @@ generator = pipeline(
     token=hf_token
 )
 
+
 def read_uploaded_file(file):
     if file is None:
         return ""
@@ -23,15 +25,29 @@ def read_uploaded_file(file):
     if file_path.endswith(".pdf"):
         reader = PdfReader(file_path)
         text = ""
+
         for page in reader.pages:
-            text += page.extract_text() or ""
+            page_text = page.extract_text()
+
+            if page_text:
+                text += page_text.replace("\n", " ")
+
+        text = " ".join(text.split())
+        text = text[:1500]
+
         return text
 
     if file_path.endswith(".txt") or file_path.endswith(".md"):
         with open(file_path, "r", encoding="utf-8") as f:
-            return f.read()
+            text = f.read()
+
+        text = " ".join(text.split())
+        text = text[:1500]
+
+        return text
 
     return ""
+
 
 def generate_response(prompt, max_tokens=120):
     result = generator(
@@ -47,10 +63,34 @@ def generate_response(prompt, max_tokens=120):
     generated_text = result[0]["generated_text"]
     return generated_text.replace(prompt, "").strip()
 
+
+def generate_flashcards(notes):
+    sentences = notes.split(".")
+    clean_sentences = []
+
+    for sentence in sentences:
+        sentence = sentence.strip()
+
+        if len(sentence) > 25:
+            clean_sentences.append(sentence)
+
+    if not clean_sentences:
+        return "Not enough content was provided to create flashcards."
+
+    flashcards = ""
+
+    for i, sentence in enumerate(clean_sentences[:5]):
+        flashcards += f"Question {i + 1}: What is one important concept from the notes?\n"
+        flashcards += f"Answer {i + 1}: {sentence}.\n\n"
+
+    return flashcards.strip()
+
+
 def ai_study_helper(notes, uploaded_file):
     file_text = read_uploaded_file(uploaded_file)
 
     combined_notes = f"{notes}\n\n{file_text}".strip()
+    combined_notes = combined_notes[:1500]
 
     if not combined_notes:
         return (
@@ -62,53 +102,57 @@ def ai_study_helper(notes, uploaded_file):
         )
 
     summary_prompt = f"""
-Summarize the following class notes in a short paragraph:
+You are a study assistant.
 
+Summarize the following notes in 3-5 sentences.
+
+Notes:
 {combined_notes}
 
 Summary:
 """
 
     key_points_prompt = f"""
-List the most important key takeaways from these class notes:
+You are a study assistant.
 
+List 5 key takeaways from these notes.
+
+Notes:
 {combined_notes}
 
 Key Takeaways:
 """
 
     questions_prompt = f"""
-Create three practice questions based on these class notes:
+You are a study assistant.
 
+Create 3 practice questions based on these notes.
+
+Notes:
 {combined_notes}
 
 Practice Questions:
 """
 
     simple_prompt = f"""
-Explain this topic in very simple language for a beginner:
+You are a study assistant.
 
+Explain these notes as if teaching a beginner.
+
+Notes:
 {combined_notes}
 
 Simple Explanation:
-"""
-
-    flashcard_prompt = f"""
-Create five flashcards from these class notes.
-Format each flashcard as Question: and Answer:
-
-{combined_notes}
-
-Flashcards:
 """
 
     summary = generate_response(summary_prompt, 120)
     key_points = generate_response(key_points_prompt, 120)
     questions = generate_response(questions_prompt, 120)
     simple_explanation = generate_response(simple_prompt, 140)
-    flashcards = generate_response(flashcard_prompt, 160)
+    flashcards = generate_flashcards(combined_notes)
 
     return summary, key_points, questions, simple_explanation, flashcards
+
 
 demo = gr.Interface(
     fn=ai_study_helper,
@@ -163,7 +207,7 @@ Built using:
             None
         ],
         [
-            "Neural networks learn patterns by adjusting weights during training using backpropagation and gradient descent.",
+            "Machine learning is a type of artificial intelligence that allows computers to learn patterns from data. Supervised learning uses labeled examples, while unsupervised learning finds patterns without labels.",
             None
         ],
     ],
