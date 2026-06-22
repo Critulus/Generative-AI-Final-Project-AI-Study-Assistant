@@ -1,0 +1,10 @@
+gradio
+transformers
+torch
+accelerate
+sentencepiece
+pypdf
+huggingface_hub
+safetensors
+tokenizers
+numpy
