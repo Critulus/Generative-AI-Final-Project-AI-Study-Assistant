@@ -1,0 +1,9 @@
+hf-env/
+.venv/
+env/
+.env
+__pycache__/
+*.pyc
+.cache/
+.DS_Store
+.vscode/
