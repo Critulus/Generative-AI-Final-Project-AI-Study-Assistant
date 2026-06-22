@@ -21,25 +21,26 @@ Users can either paste notes directly into the application or upload supported f
 ## Features
 
 ### Summary Generation
-
 Creates a concise summary of the provided notes.
 
 ### Key Takeaways
-
 Identifies the most important concepts and ideas.
 
 ### Practice Questions
-
 Generates study questions to reinforce learning.
 
 ### Simple Explanation
-
 Rewrites content in beginner-friendly language.
 
 ### Flashcard Creation
+Automatically creates study flashcards from the uploaded notes and extracted PDF content.
 
-Automatically generates flashcards from the supplied material.
-
+### File Upload Support
+Supports:
+- PDF files
+- TXT files
+- Markdown (.md) files
+  
 ## Technologies Used
 
 * Python
@@ -82,11 +83,12 @@ http://127.0.0.1:7860
 
 ## Future Enhancements
 
-* Better instruction-tuned models
-* PDF study guides
-* Quiz generation with answer keys
-* Export flashcards to Quizlet/Anki
-* Multi-document support
+- Replace DistilGPT2 with an instruction-tuned model
+- Improve summary quality
+- Generate answer keys for practice questions
+- Export flashcards to Quizlet or Anki
+- Support larger PDFs through document chunking
+- Add quiz generation and scoring
 
 ## Learning Outcomes
 
