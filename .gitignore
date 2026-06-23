@@ -1,17 +1,58 @@
+# Virtual Environments
+
 hf-env/
-.venv/
-env/
+venv/
 .env
 
-__pycache__/
+# Python Cache
+
+**pycache**/
 *.pyc
 *.pyo
+*.pyd
+
+# Jupyter Notebooks
+
+.ipynb_checkpoints/
+
+# VS Code
 
 .vscode/
-.idea/
+
+# Hugging Face Cache
 
 .cache/
-.ipynb_checkpoints/
+huggingface/
+
+# Operating System Files
 
 .DS_Store
 Thumbs.db
+
+# Logs
+
+*.log
+
+# Temporary Files
+
+*.tmp
+*.temp
+
+# Generated Files
+
+*.bak
+
+# Python Build Files
+
+build/
+dist/
+*.egg-info/
+
+# Gradio Temporary Files
+
+gradio_cached_examples/
+
+# Environment Variables
+
+.env.local
+.env.production
