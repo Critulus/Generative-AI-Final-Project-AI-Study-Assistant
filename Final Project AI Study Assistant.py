@@ -1,14 +1,11 @@
 # Final Project: AI Study Assistant
-
 import os
 import gradio as gr
 from transformers import pipeline
 from pypdf import PdfReader
 
-# Optional Hugging Face token
 hf_token = os.getenv("HF_TOKEN")
 
-# Load Hugging Face model
 generator = pipeline(
     "text-generation",
     model="distilgpt2",
@@ -28,23 +25,18 @@ def read_uploaded_file(file):
 
         for page in reader.pages:
             page_text = page.extract_text()
-
             if page_text:
                 text += page_text.replace("\n", " ")
 
         text = " ".join(text.split())
-        text = text[:1500]
-
-        return text
+        return text[:1500]
 
     if file_path.endswith(".txt") or file_path.endswith(".md"):
         with open(file_path, "r", encoding="utf-8") as f:
             text = f.read()
 
         text = " ".join(text.split())
-        text = text[:1500]
-
-        return text
+        return text[:1500]
 
     return ""
 
@@ -70,17 +62,24 @@ def generate_flashcards(notes):
 
     for sentence in sentences:
         sentence = sentence.strip()
-
-        if len(sentence) > 25:
+        if len(sentence) > 30:
             clean_sentences.append(sentence)
 
     if not clean_sentences:
         return "Not enough content was provided to create flashcards."
 
+    question_stems = [
+        "What is the main idea of this concept?",
+        "Why is this concept important?",
+        "How would you explain this in simple terms?",
+        "What is one key takeaway from this point?",
+        "How does this concept connect to the topic?"
+    ]
+
     flashcards = ""
 
     for i, sentence in enumerate(clean_sentences[:5]):
-        flashcards += f"Question {i + 1}: What is one important concept from the notes?\n"
+        flashcards += f"Question {i + 1}: {question_stems[i]}\n"
         flashcards += f"Answer {i + 1}: {sentence}.\n\n"
 
     return flashcards.strip()
